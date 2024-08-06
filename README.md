@@ -13,5 +13,4 @@
 
 - As a user, I want to browse the furniture collection, so I can find pieces that suit my taste and needs.
 - As a user, I want to view the furniture in 360 degrees, so I can see the product from all angles and better understand its design and quality.
-- As a user, I want to add items to my cart, so I can review my selected products before making a purchase.
-- As a user, I want to save my favorite items, so I can easily access and purchase them later.
+- As a user, I want to be able to edit in the space of the room.

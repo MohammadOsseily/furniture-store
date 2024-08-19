@@ -11,10 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('products')){
+            Schema::create('products', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->text('description')->nullable();
+                $table->decimal('price', 10 , 2);
+                $table->foreignId('category_id')->constrained('categories')->onDelete('set null');
+                $table->string('image');
+                $table->string('color');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

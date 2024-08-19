@@ -21,6 +21,7 @@ return new class extends Migration
                 $table->text('city');
                 $table->text('comment');
                 $table->timestamps();
+
             });
         }
     }

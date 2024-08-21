@@ -19,7 +19,7 @@ class Product extends Model
     }
     public function threeDProduct(): HasOne
     {
-        return $this->hasOne(ThreeDProduct::class);
+        return $this->hasOne(ThreeDProuct::class);
     }
 
     public function orderItems(): HasMany

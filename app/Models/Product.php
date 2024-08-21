@@ -17,6 +17,25 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+    public function threeDProduct(): HasOne
+    {
+        return $this->hasOne(ThreeDProduct::class);
+    }
+
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function cartProducts(): HasMany
+    {
+        return $this->hasMany(CartProduct::class);
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(UserActivity::class);
+    }
 
 
 }

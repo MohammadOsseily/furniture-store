@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if(Schema::hasTable('shopping_carts')){
+        if(!Schema::hasTable('shopping_carts')){
             Schema::create('shopping_carts', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-                $table->timestamps();
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->timestamps();
             });
         }
     }

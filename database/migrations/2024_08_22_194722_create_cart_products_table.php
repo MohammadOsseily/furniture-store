@@ -8,13 +8,17 @@ return new class  extends Migration
 {
     public function up()
     {
+        if(!Schema::hasTable('cart_products')){
         Schema::create('cart_products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cart_is')->constrained('shopping_carts')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->unsignedBigInteger('cart_is');
+            $table->unsignedBigInteger('product_id');
             $table->integer('stock')->default(1);
+            $table->foreign('cart_is')->references('id')->on('shopping_carts')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();
         });
+    }
     }
 
     public function down()

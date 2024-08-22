@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if(Schema::hasTable("product3ds")){
+        if(!Schema::hasTable("product3ds")){
             Schema::create('product3ds', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-                $table->string('model_file_path');
-                $table->enum('file_type', ['gltf', 'obj', 'fbx']);
-                $table->timestamps();
+            $table->id();
+            $table->unsignedBigInteger('product_id');
+            $table->string('model_file_path');
+            $table->enum('file_type', ['gltf', 'obj', 'fbx']);
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->timestamps();
             });
         }
     }

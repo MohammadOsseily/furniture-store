@@ -18,5 +18,10 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function product3d(): HasOne
+    {
+        return $this->hasOne(Product3d::class);
+    }
+
 
 }

@@ -33,5 +33,8 @@ class Product extends Model
         return $this->hasMany(CartProduct::class);
     }
 
-
+    public function activities(): HasMany
+    {
+        return $this->hasMany(UserActivity::class);
+    }
 }

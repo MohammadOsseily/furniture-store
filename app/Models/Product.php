@@ -23,5 +23,10 @@ class Product extends Model
         return $this->hasOne(Product3d::class);
     }
 
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
 
 }

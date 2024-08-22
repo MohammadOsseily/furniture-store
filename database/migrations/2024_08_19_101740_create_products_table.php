@@ -13,14 +13,15 @@ return new class extends Migration
     {
         if(!Schema::hasTable('products')){
             Schema::create('products', function (Blueprint $table) {
-                $table->id();
-                $table->string('name');
-                $table->text('description')->nullable();
-                $table->decimal('price', 10 , 2);
-                $table->foreignId('category_id')->constrained('categories')->onDelete('set null');
-                $table->string('image');
-                $table->string('color');
-                $table->timestamps();
+            $table->id();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->decimal('price', 10, 2);
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->string('image')->nullable();
+            $table->text('color')->nullable();
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
+            $table->timestamps();
             });
         }
     }

@@ -107,5 +107,30 @@ class ProductController extends Controller
         ]);
     }
 
+    // Delete Product (Admin Only)
+    public function destroy($id)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
 
+        $product = Product::find($id);
+
+        if(!$product){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found',
+            ], 404);
+        }
+
+        $product->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product deleted successfully',
+        ]);
+    }
 }

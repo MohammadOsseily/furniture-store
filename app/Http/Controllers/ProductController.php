@@ -24,5 +24,23 @@ class ProductController extends Controller
         ]);
     }
 
+    // Show Single Product
+    public function show($id)
+    {
+        $product = Product::find($id);
+
+        if(!$product){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'product' => $product,
+        ]);
+    }
+
 
 }

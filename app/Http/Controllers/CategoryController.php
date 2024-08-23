@@ -42,5 +42,29 @@ class CategoryController extends Controller
         ]);
     }
 
+    // Create New Category (Admin Only)
+    public function store(Request $request)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+            'description' => 'nullable|string',
+        ]);
+
+        $category = Category::create($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Category created successfully',
+            'category' => $category,
+        ], 201);
+    }
+
 
 }

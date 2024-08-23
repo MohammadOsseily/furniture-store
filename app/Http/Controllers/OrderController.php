@@ -136,5 +136,31 @@ class OrderController extends Controller
         ]);
     }
 
+    // Delete Order (Admin Only)
+    public function destroy($id)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
 
+        $order = Order::find($id);
+
+        if(!$order){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found',
+            ], 404);
+        }
+
+        $order->orderItems()->delete();
+        $order->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order deleted successfully',
+        ]);
+    }
 }

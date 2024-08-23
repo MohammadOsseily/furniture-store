@@ -41,4 +41,34 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
+    /**
+     * Test user login.
+     *
+     * @return void
+     */
+    public function testUserLogin()
+    {
+        // Manually create a user without using a factory
+        $user = User::create([
+            'name' => 'Test User',
+            'email' => 'testuser@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+        ]);
+
+        $response = $this->postJson('/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'user' => ['id', 'name', 'email', 'role'],
+                'authorization' => ['token', 'type'],
+            ]);
+    }
+
+
 }

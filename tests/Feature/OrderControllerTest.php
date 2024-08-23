@@ -72,5 +72,24 @@ class OrderControllerTest extends TestCase
         ]);
     }
 
+    public function testDeleteOrder()
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $token = JWTAuth::fromUser($user);
+        $order = Order::factory()->create();
 
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson("/api/orders/{$order->id}/delete");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Order deleted successfully',
+            ]);
+
+        $this->assertDatabaseMissing('orders', [
+            'id' => $order->id,
+        ]);
+    }
 }

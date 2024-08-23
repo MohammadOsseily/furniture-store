@@ -27,5 +27,35 @@ class ProductControllerTest extends TestCase
             ]);
     }
 
+    public function testCreateProduct()
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $token = JWTAuth::fromUser($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/api/products/create', [
+            'name' => 'Test Product',
+            'description' => 'Test Description',
+            'price' => 100.00,
+            'category_id' => 1,
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Product created successfully',
+                'product' => [
+                    'name' => 'Test Product',
+                    'price' => 100.00,
+                ],
+            ]);
+
+        $this->assertDatabaseHas('products', [
+            'name' => 'Test Product',
+            'price' => 100.00,
+        ]);
+    }
+
 
 }

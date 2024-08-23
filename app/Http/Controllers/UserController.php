@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
@@ -23,35 +24,38 @@ class UserController extends Controller
         ]);
     }
 
-    // Update Authenticated User Profile
     public function updateProfile(Request $request)
-    {
-        $user = Auth::user();
+{
+    // Decode the token and get the authenticated user
+    $user = JWTAuth::parseToken()->authenticate();
 
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|string|email|max:255|unique:users,email,'.$user->id,
-            'password' => 'sometimes|string|min:6|confirmed',
-        ]);
-
-        if($request->has('name')){
-            $user->name = $request->name;
-        }
-
-        if($request->has('email')){
-            $user->email = $request->email;
-        }
-
-        if($request->has('password')){
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->save();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Profile updated successfully',
-            'user' => $user,
-        ]);
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
     }
+
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'name' => 'sometimes|string|max:255',
+        'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+        'password' => 'sometimes|string|min:6|confirmed',
+    ]);
+
+    // Check if a password is provided, and if so, hash it before updating
+    if ($request->has('password')) {
+        $validatedData['password'] = Hash::make($request->password);
+    }
+
+    // Update the user profile in the database
+    $user->update($validatedData);
+
+    // Return a successful response with the updated user data
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Profile updated successfully',
+        'user' => $user,
+    ]);
+}
+
+
+
 }

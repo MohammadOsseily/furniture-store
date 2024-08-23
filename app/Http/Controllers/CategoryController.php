@@ -99,5 +99,30 @@ class CategoryController extends Controller
         ]);
     }
 
+    // Delete Category (Admin Only)
+    public function destroy($id)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
 
+        $category = Category::find($id);
+
+        if(!$category){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Category not found',
+            ], 404);
+        }
+
+        $category->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Category deleted successfully',
+        ]);
+    }
 }

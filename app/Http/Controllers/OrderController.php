@@ -58,5 +58,50 @@ class OrderController extends Controller
         ]);
     }
 
+    // Create New Order
+    public function store(Request $request)
+    {
+        $request->validate([
+            'address_line' => 'required|string|max:255',
+            'city' => 'required|string|max:100',
+            'comment' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
+        ]);
+
+        $total_amount = 0;
+
+        foreach ($request->items as $item) {
+            $product = \App\Models\Product::find($item['product_id']);
+            $total_amount += $product->price * $item['quantity'];
+        }
+
+        $order = Order::create([
+            'user_id' => Auth::id(),
+            'total_amount' => $total_amount,
+            'status' => 'pending',
+            'address_line' => $request->address_line,
+            'city' => $request->city,
+            'comment' => $request->comment,
+        ]);
+
+        foreach ($request->items as $item) {
+            $product = \App\Models\Product::find($item['product_id']);
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $product->id,
+                'quantity' => $item['quantity'],
+                'price' => $product->price,
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order placed successfully',
+            'order' => $order->load('orderItems'),
+        ], 201);
+    }
+
 
 }

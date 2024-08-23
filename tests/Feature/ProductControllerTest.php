@@ -84,5 +84,24 @@ class ProductControllerTest extends TestCase
         ]);
     }
 
+    public function testDeleteProduct()
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $token = JWTAuth::fromUser($user);
+        $product = Product::factory()->create();
 
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson("/api/products/{$product->id}/delete");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Product deleted successfully',
+            ]);
+
+        $this->assertDatabaseMissing('products', [
+            'id' => $product->id,
+        ]);
+    }
 }

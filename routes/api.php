@@ -46,3 +46,18 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/products/{id}/delete', [ProductController::class, 'destroy']);     // Delete Product (Admin Only)
 });
 
+/*
+|--------------------------------------------------------------------------
+| Category Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/categories', [CategoryController::class, 'index']);               // List All Categories
+Route::get('/categories/{id}', [CategoryController::class, 'show']);           // Show Single Category
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::post('/categories/create', [CategoryController::class, 'store']);            // Create Category (Admin Only)
+    Route::post('/categories/{id}/update', [CategoryController::class, 'update']);      // Update Category (Admin Only)
+    Route::post('/categories/{id}/delete', [CategoryController::class, 'destroy']);     // Delete Category (Admin Only)
+});
+

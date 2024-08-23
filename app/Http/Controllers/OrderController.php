@@ -103,5 +103,38 @@ class OrderController extends Controller
         ], 201);
     }
 
+    // Update Order Status (Admin Only)
+    public function update(Request $request, $id)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
+
+        $order = Order::find($id);
+
+        if(!$order){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found',
+            ], 404);
+        }
+
+        $request->validate([
+            'status' => 'required|in:pending,processing,shipped,delivered,canceled',
+        ]);
+
+        $order->status = $request->status;
+        $order->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order status updated successfully',
+            'order' => $order,
+        ]);
+    }
+
 
 }

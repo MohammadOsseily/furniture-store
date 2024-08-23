@@ -20,3 +20,14 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/refresh', [AuthController::class, 'refresh']);   // Refresh Token
 });
 
+/*
+|--------------------------------------------------------------------------
+| User Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('/user/profile', [UserController::class, 'profile']);              // Get User Profile
+    Route::post('/user/profile/update', [UserController::class, 'updateProfile']); // Update User Profile
+});
+

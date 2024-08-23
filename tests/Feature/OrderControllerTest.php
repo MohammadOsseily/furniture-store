@@ -45,5 +45,32 @@ class OrderControllerTest extends TestCase
         ]);
     }
 
+    public function testUpdateOrderStatus()
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $token = JWTAuth::fromUser($user);
+        $order = Order::factory()->create(['status' => 'pending']);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson("/api/orders/{$order->id}/update", [
+            'status' => 'shipped',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Order status updated successfully',
+                'order' => [
+                    'status' => 'shipped',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'status' => 'shipped',
+        ]);
+    }
+
 
 }

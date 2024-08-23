@@ -70,5 +70,42 @@ class ProductController extends Controller
         ], 201);
     }
 
+    // Update Existing Product (Admin Only)
+    public function update(Request $request, $id)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
+
+        $product = Product::find($id);
+
+        if(!$product){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found',
+            ], 404);
+        }
+
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'sometimes|nullable|string',
+            'price' => 'sometimes|numeric',
+            'category_id' => 'sometimes|exists:categories,id',
+            'image' => 'sometimes|nullable|url',
+            'color' => 'sometimes|string|max:50',
+        ]);
+
+        $product->update($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product updated successfully',
+            'product' => $product,
+        ]);
+    }
+
 
 }

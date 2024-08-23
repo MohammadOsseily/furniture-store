@@ -42,5 +42,33 @@ class ProductController extends Controller
         ]);
     }
 
+    // Create New Product (Admin Only)
+    public function store(Request $request)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|url',
+            'color' => 'nullable|string|max:50',
+        ]);
+
+        $product = Product::create($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product created successfully',
+            'product' => $product,
+        ], 201);
+    }
+
 
 }

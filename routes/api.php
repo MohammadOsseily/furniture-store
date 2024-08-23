@@ -31,3 +31,18 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/user/profile/update', [UserController::class, 'updateProfile']); // Update User Profile
 });
 
+/*
+|--------------------------------------------------------------------------
+| Product Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/products', [ProductController::class, 'index']);                // List All Products
+Route::get('/products/{id}', [ProductController::class, 'show']);            // Show Single Product
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::post('/products/create', [ProductController::class, 'store']);            // Create Product (Admin Only)
+    Route::post('/products/{id}/update', [ProductController::class, 'update']);      // Update Product (Admin Only)
+    Route::post('/products/{id}/delete', [ProductController::class, 'destroy']);     // Delete Product (Admin Only)
+});
+

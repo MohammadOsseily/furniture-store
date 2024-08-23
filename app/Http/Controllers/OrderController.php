@@ -32,5 +32,31 @@ class OrderController extends Controller
         ]);
     }
 
+    // Show Single Order
+    public function show($id)
+    {
+        $order = Order::with('orderItems')->find($id);
+
+        if(!$order){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found',
+            ], 404);
+        }
+
+        // Check if user is owner or admin
+        if (Auth::id() !== $order->user_id && Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'order' => $order,
+        ]);
+    }
+
 
 }

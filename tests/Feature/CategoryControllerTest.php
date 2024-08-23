@@ -27,5 +27,30 @@ class CategoryControllerTest extends TestCase
             ]);
     }
 
+    public function testCreateCategory()
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $token = JWTAuth::fromUser($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/api/categories/create', [
+            'name' => 'Test Category',
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Category created successfully',
+                'category' => [
+                    'name' => 'Test Category',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('categories', [
+            'name' => 'Test Category',
+        ]);
+    }
+
 
 }

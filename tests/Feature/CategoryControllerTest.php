@@ -2,19 +2,30 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class CategoryControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
+    use RefreshDatabase;
 
-        $response->assertStatus(200);
+    public function testListCategories()
+    {
+        Category::factory()->count(5)->create();
+
+        $response = $this->getJson('/api/categories');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'status',
+                'categories' => [
+                    '*' => ['id', 'name', 'created_at', 'updated_at'],
+                ],
+            ]);
     }
+
+
 }

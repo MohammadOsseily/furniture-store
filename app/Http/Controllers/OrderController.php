@@ -34,6 +34,21 @@ class OrderController extends Controller
         ], 200);
     }
 
+    // User access to their order history
+    public function orderHistory()
+    {
+        $user = Auth::user();
+
+        // Fetch orders belonging to the authenticated user, paginated
+        $orders = Order::with('orderItems')
+            ->where('user_id', $user->id)
+            ->paginate(10);
+
+        return response()->json([
+            'status' => 'success',
+            'orders' => $orders,
+        ], 200);
+    }
 
     // Show Single Order
     public function show($id)

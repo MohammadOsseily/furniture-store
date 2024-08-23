@@ -2,60 +2,72 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
-    // Get Authenticated User Profile
+    // Get the authenticated user's profile
     public function profile()
     {
         $user = Auth::user();
+
         return response()->json([
             'status' => 'success',
             'user' => $user,
-        ]);
+        ], 200);
     }
 
+    // Update the authenticated user's profile
     public function updateProfile(Request $request)
-{
-    // Decode the token and get the authenticated user
-    $user = JWTAuth::parseToken()->authenticate();
+    {
+        $user = Auth::user();
 
-    if (!$user) {
-        return response()->json(['error' => 'User not found'], 404);
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'sometimes|string|min:6|confirmed',
+        ]);
+
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
+
+        if ($request->has('email')) {
+            $user->email = $request->email;
+        }
+
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Profile updated successfully',
+            'user' => $user,
+        ], 200);
     }
 
-    // Validate the incoming request data
-    $validatedData = $request->validate([
-        'name' => 'sometimes|string|max:255',
-        'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
-        'password' => 'sometimes|string|min:6|confirmed',
-    ]);
+    // List all users with pagination (Admin only)
+    public function index()
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
 
-    // Check if a password is provided, and if so, hash it before updating
-    if ($request->has('password')) {
-        $validatedData['password'] = Hash::make($request->password);
+        $users = User::paginate(10);
+
+        return response()->json([
+            'status' => 'success',
+            'users' => $users,
+        ], 200);
     }
-
-    // Update the user profile in the database
-    $user->update($validatedData);
-
-    // Return a successful response with the updated user data
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Profile updated successfully',
-        'user' => $user,
-    ]);
-}
-
-
-
 }

@@ -52,5 +52,32 @@ class CategoryControllerTest extends TestCase
         ]);
     }
 
+    public function testUpdateCategory()
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $token = JWTAuth::fromUser($user);
+        $category = Category::factory()->create();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson("/api/categories/{$category->id}/update", [
+            'name' => 'Updated Category',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Category updated successfully',
+                'category' => [
+                    'name' => 'Updated Category',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('categories', [
+            'id' => $category->id,
+            'name' => 'Updated Category',
+        ]);
+    }
+
 
 }

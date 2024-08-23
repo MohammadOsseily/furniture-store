@@ -15,13 +15,12 @@ class ProductController extends Controller
     }
 
     // List All Products
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
-        return response()->json([
-            'status' => 'success',
-            'products' => $products,
-        ]);
+        // Paginate the results, 10 products per page by default
+        $products = Product::paginate(10);
+
+        return response()->json($products, 200);
     }
 
     // Show Single Product

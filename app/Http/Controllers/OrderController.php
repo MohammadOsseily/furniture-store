@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Order;
+use App\Models\Order;
 
 class OrderController extends Controller
 {
@@ -16,6 +16,7 @@ class OrderController extends Controller
     }
 
     // List All Orders (Admin Only)
+    // Admin access to all orders
     public function index()
     {
         if (Gate::denies('isAdmin')) {
@@ -25,12 +26,14 @@ class OrderController extends Controller
             ], 403);
         }
 
-        $orders = Order::with('orderItems')->get();
+        $orders = Order::with('orderItems')->paginate(10);
+
         return response()->json([
             'status' => 'success',
             'orders' => $orders,
-        ]);
+        ], 200);
     }
+
 
     // Show Single Order
     public function show($id)
@@ -125,6 +128,7 @@ class OrderController extends Controller
         $request->validate([
             'status' => 'required|in:pending,processing,shipped,delivered,canceled',
         ]);
+
 
         $order->status = $request->status;
         $order->save();

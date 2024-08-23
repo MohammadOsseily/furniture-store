@@ -2,19 +2,30 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class ProductControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
+    use RefreshDatabase;
 
-        $response->assertStatus(200);
+    public function testListProducts()
+    {
+        Product::factory()->count(5)->create();
+
+        $response = $this->getJson('/api/products');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'status',
+                'products' => [
+                    '*' => ['id', 'name', 'price', 'created_at', 'updated_at'],
+                ],
+            ]);
     }
+
+
 }

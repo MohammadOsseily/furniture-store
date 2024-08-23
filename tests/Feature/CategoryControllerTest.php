@@ -79,5 +79,24 @@ class CategoryControllerTest extends TestCase
         ]);
     }
 
+    public function testDeleteCategory()
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $token = JWTAuth::fromUser($user);
+        $category = Category::factory()->create();
 
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson("/api/categories/{$category->id}/delete");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Category deleted successfully',
+            ]);
+
+        $this->assertDatabaseMissing('categories', [
+            'id' => $category->id,
+        ]);
+    }
 }

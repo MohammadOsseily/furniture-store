@@ -70,5 +70,30 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
+    /**
+     * Test user logout.
+     *
+     * @return void
+     */
+    public function testUserLogout()
+    {
+        // Manually create a user without using a factory
+        $user = User::create([
+            'name' => 'Test User',
+            'email' => 'testuser@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+        ]);
 
+        $token = JWTAuth::fromUser($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/api/auth/logout');
+
+        $response->assertJson([
+            'status' => 'success',
+            'message' => 'Successfully logged out', // Update this line to match the actual API response
+        ]);
+    }
 }

@@ -57,5 +57,32 @@ class ProductControllerTest extends TestCase
         ]);
     }
 
+    public function testUpdateProduct()
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $token = JWTAuth::fromUser($user);
+        $product = Product::factory()->create();
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson("/api/products/{$product->id}/update", [
+            'name' => 'Updated Product',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Product updated successfully',
+                'product' => [
+                    'name' => 'Updated Product',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'name' => 'Updated Product',
+        ]);
+    }
+
 
 }

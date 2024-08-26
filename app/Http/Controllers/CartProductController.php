@@ -29,3 +29,26 @@ class CartProductController extends Controller
         ], 200);
     }
 
+    // Add a product to the cart
+    public function store(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cart = ShoppingCart::firstOrCreate([
+            'user_id' => Auth::id(),
+        ]);
+
+        $cartProduct = CartProduct::updateOrCreate(
+            ['cart_id' => $cart->id, 'product_id' => $request->product_id],
+            ['quantity' => $request->quantity]
+        );
+
+        return response()->json([
+            'status' => 'success',
+            'cart_product' => $cartProduct,
+            'message' => 'Product added to cart',
+        ], 201);
+    }

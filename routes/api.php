@@ -7,6 +7,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\CartProductController;
+use App\Http\Controllers\ShoppingCartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,4 +88,35 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/orders/history', [OrderController::class, 'orderHistory']);         // User's Order History
     Route::get('/orders/{id}', [OrderController::class, 'show']);                    // Show Single Order
     Route::post('/orders/create', [OrderController::class, 'store']);                // Create New Order
+});
+
+/*
+|--------------------------------------------------------------------------
+| OrderItem Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('/orders/{orderId}/items', [OrderItemController::class, 'index']); // List items in an order
+    Route::get('/orders/{orderId}/items/{id}', [OrderItemController::class, 'show']); // Show single order item
+    Route::post('/orders/{orderId}/items/{id}/update', [OrderItemController::class, 'update'])->middleware('isAdmin'); // Update order item (Admin)
+    Route::post('/orders/{orderId}/items/{id}/delete', [OrderItemController::class, 'destroy'])->middleware('isAdmin'); // Delete order item (Admin)
+});
+
+/*
+|--------------------------------------------------------------------------
+| ShoppingCart and CartProduct Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['middleware' => 'auth:api'], function () {
+    // CartProduct routes
+    Route::get('/cart/products', [CartProductController::class, 'index']); // List all products in cart
+    Route::post('/cart/products/add', [CartProductController::class, 'store']); // Add a product to the cart
+    Route::post('/cart/products/{id}/update', [CartProductController::class, 'update']); // Update a product in the cart
+    Route::post('/cart/products/{id}/delete', [CartProductController::class, 'destroy']); // Remove a product from the cart
+
+    // ShoppingCart routes
+    Route::get('/cart', [ShoppingCartController::class, 'show']); // View the shopping cart
+    Route::post('/cart/clear', [ShoppingCartController::class, 'clear']); // Clear the shopping cart
 });

@@ -36,3 +36,31 @@ class OrderItemController extends Controller
         ], 200);
     }
 
+    // No create/store method as order items are typically created as part of the order creation process
+
+    // Update order item (e.g., by admin)
+    public function update(Request $request, $orderId, $id)
+    {
+        $orderItem = OrderItem::where('order_id', $orderId)->where('id', $id)->first();
+
+        if (!$orderItem) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order item not found',
+            ], 404);
+        }
+
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+            'price' => 'required|numeric',
+        ]);
+
+        $orderItem->update($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order item updated successfully',
+            'order_item' => $orderItem,
+        ], 200);
+    }
+

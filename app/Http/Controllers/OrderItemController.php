@@ -64,3 +64,23 @@ class OrderItemController extends Controller
         ], 200);
     }
 
+    // Delete an order item
+    public function destroy($orderId, $id)
+    {
+        $orderItem = OrderItem::where('order_id', $orderId)->where('id', $id)->first();
+
+        if (!$orderItem) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order item not found',
+            ], 404);
+        }
+
+        $orderItem->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order item deleted successfully',
+        ], 200);
+    }
+}

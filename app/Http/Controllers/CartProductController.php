@@ -78,3 +78,23 @@ class CartProductController extends Controller
         ], 200);
     }
 
+    // Remove a product from the cart
+    public function destroy($id)
+    {
+        $cartProduct = CartProduct::where('id', $id)->first();
+
+        if (!$cartProduct) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found in cart',
+            ], 404);
+        }
+
+        $cartProduct->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product removed from cart',
+        ], 200);
+    }
+}

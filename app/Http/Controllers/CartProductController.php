@@ -52,3 +52,29 @@ class CartProductController extends Controller
             'message' => 'Product added to cart',
         ], 201);
     }
+
+    // Update a product in the cart
+    public function update(Request $request, $id)
+    {
+        $cartProduct = CartProduct::where('id', $id)->first();
+
+        if (!$cartProduct) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found in cart',
+            ], 404);
+        }
+
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cartProduct->update($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'cart_product' => $cartProduct,
+            'message' => 'Cart product updated successfully',
+        ], 200);
+    }
+

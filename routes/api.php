@@ -60,6 +60,8 @@ Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
 */
 
 // Public routes for categories
+Route::get('/categories-with-products', [CategoryController::class, 'getAllCategoriesWithProducts']);
+
 Route::get('/categories', [CategoryController::class, 'index']);               // List All Categories
 Route::get('/categories/{id}', [CategoryController::class, 'show']);           // Show Single Category
 

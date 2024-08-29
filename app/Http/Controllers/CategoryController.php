@@ -11,7 +11,7 @@ class CategoryController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+        $this->middleware('auth:api', ['except' => ['index', 'show', 'getAllCategoriesWithProducts']]);
     }
 
     // List All Categories
@@ -23,24 +23,17 @@ class CategoryController extends Controller
             'categories' => $categories,
         ]);
     }
+    public function getAllCategoriesWithProducts()
+{
+    $categories = Category::with('products')->get();
 
-    // Show Single Category
-    public function show($id)
-    {
-        $category = Category::find($id);
+    return response()->json([
+        'status' => 'success',
+        'categories' => $categories,
+    ]);
+}
 
-        if(!$category){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Category not found',
-            ], 404);
-        }
 
-        return response()->json([
-            'status' => 'success',
-            'category' => $category,
-        ]);
-    }
 
     // Create New Category (Admin Only)
     public function store(Request $request)

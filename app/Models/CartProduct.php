@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  *
  * @property int $id
- * @property int $cart_is
+ * @property int $cart_id
  * @property int $product_id
  * @property int $stock
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -32,15 +32,15 @@ class CartProduct extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['cart_is', 'product_id', 'stock'];
+    protected $fillable = ['cart_id', 'product_id', 'stock'];
 
     public function shoppingCart(): BelongsTo
     {
-        return $this->belongsTo(ShoppingCart::class, 'cart_is');
+        return $this->belongsTo(ShoppingCart::class, 'cart_id');
     }
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }

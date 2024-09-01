@@ -86,7 +86,44 @@ public function store(Request $request)
     ], 201);
 }
 
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|integer|min:1',
+    ]);
 
+    // Find the cart product by its ID
+    $cartProduct = CartProduct::find($id);
+
+    // Check if the cart product exists
+    if (!$cartProduct) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Cart product not found',
+        ], 404);
+    }
+
+    // Get the related product
+    $product = Product::find($cartProduct->product_id);
+
+    // Check if the requested quantity exceeds the available stock
+    print_r($product->stock);
+    if ( (int)$request->quantity > $product->stock) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Requested quantity exceeds available stock',
+        ], 400);
+    }
+
+    // Update the cart product quantity
+    $cartProduct->update(['quantity' => $request->quantity]);
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Cart product updated successfully  ' . $request->quantity,
+        'cart_product' => $cartProduct,
+    ], 200);
+}
 
     // Remove a product from the cart
     public function destroy($id)

@@ -19,6 +19,7 @@ class ProductFactory extends Factory
             'description' => $this->faker->sentence,
             'price' => $this->faker->randomFloat(2, 10, 1000),
             'category_id' => $category->id,  // Assigning a random category
+            'stock' => $this->faker->numberBetween(1, 100),
             'image' => $this->faker->imageUrl(),
             'color' => $this->faker->safeColorName(),
             'created_at' => now(),

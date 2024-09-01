@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -45,7 +45,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'price', 'category_id', 'image', 'color'];
+    protected $fillable = ['name', 'description', 'price', 'category_id', 'image', 'color', 'stock'];
 
     public function category(): BelongsTo
     {

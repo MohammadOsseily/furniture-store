@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CartProduct;
+use App\Models\Product;
 use App\Models\ShoppingCart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,58 +31,67 @@ class CartProductController extends Controller
     }
 
     // Add a product to the cart
-    public function store(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
+public function store(Request $request)
+{
+    $validatedData = $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'quantity' => 'required|integer|min:1',
+    ]);
 
-        $cart = ShoppingCart::firstOrCreate([
-            'user_id' => Auth::id(),
-        ]);
-
-        $cartProduct = CartProduct::updateOrCreate(
-            ['cart_id' => $cart->id, 'product_id' => $request->product_id],
-            ['quantity' => $request->quantity]
-        );
-
+    // Debugging: Check if quantity is received
+    if (!$request->has('quantity')) {
         return response()->json([
-            'status' => 'success',
-            'cart_product' => $cartProduct,
-            'message' => 'Product added to cart',
-        ], 201);
+            'status' => 'error',
+            'message' => 'Quantity field is missing.',
+        ], 400);
     }
 
-    // Update a product in the cart
-    public function update(Request $request, $id)
-    {
-        $cartProduct = CartProduct::where('id', $id)->first();
+    $product = Product::find($validatedData['product_id']);
 
-        if (!$cartProduct) {
+    if ($product->stock < $validatedData['quantity']) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Not enough stock available',
+        ], 400);
+    }
+
+    $cart = ShoppingCart::firstOrCreate([
+        'user_id' => Auth::id(),
+    ]);
+
+    $cartProduct = CartProduct::where('cart_id', $cart->id)
+        ->where('product_id', $validatedData['product_id'])
+        ->first();
+
+    if ($cartProduct) {
+        $newQuantity = $cartProduct->quantity + $validatedData['quantity'];
+        if ($product->stock < $newQuantity) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Product not found in cart',
-            ], 404);
+                'message' => 'Not enough stock available',
+            ], 400);
         }
-
-        $request->validate([
-            'quantity' => 'required|integer|min:1',
+        $cartProduct->update(['quantity' => $newQuantity]);
+    } else {
+        CartProduct::create([
+            'cart_id' => $cart->id,
+            'product_id' => $validatedData['product_id'],
+            'quantity' => $validatedData['quantity'],
         ]);
-
-        $cartProduct->update($request->all());
-
-        return response()->json([
-            'status' => 'success',
-            'cart_product' => $cartProduct,
-            'message' => 'Cart product updated successfully',
-        ], 200);
     }
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Product added to cart',
+    ], 201);
+}
+
+
 
     // Remove a product from the cart
     public function destroy($id)
     {
-        $cartProduct = CartProduct::where('id', $id)->first();
+        $cartProduct = CartProduct::find($id);
 
         if (!$cartProduct) {
             return response()->json([

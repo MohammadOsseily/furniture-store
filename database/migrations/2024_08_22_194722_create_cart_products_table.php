@@ -13,7 +13,7 @@ return new class  extends Migration
             $table->id();
             $table->unsignedBigInteger('cart_id');
             $table->unsignedBigInteger('product_id');
-            $table->integer('stock')->default(1);
+            $table->integer('quantity')->default(1);
             $table->foreign('cart_id')->references('id')->on('shopping_carts')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();

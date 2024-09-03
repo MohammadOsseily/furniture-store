@@ -34,21 +34,22 @@ class OrderController extends Controller
         ], 200);
     }
 
-    // User access to their order history
     public function orderHistory()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        // Fetch orders belonging to the authenticated user, paginated
-        $orders = Order::with('orderItems')
-            ->where('user_id', $user->id)
-            ->paginate(10);
+    // Fetch orders belonging to the authenticated user, including order items and product details
+    $orders = Order::with(['orderItems.product'])
+        ->where('user_id', $user->id)
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'orders' => $orders,
-        ], 200);
-    }
+    return response()->json([
+        'status' => 'success',
+        'orders' => $orders,
+    ], 200);
+}
+
 
     // Show Single Order
     public function show($id)
@@ -182,4 +183,8 @@ class OrderController extends Controller
             'message' => 'Order deleted successfully',
         ]);
     }
+
+
+
 }
+

@@ -7,15 +7,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ShoppingCartController extends Controller
 {
-    // View the user's shopping cart
     public function show()
 {
-    // Retrieve the authenticated user's shopping cart along with the cart products and their associated products
     $cart = ShoppingCart::with('cartProducts.product')
         ->where('user_id', Auth::id())
         ->first();
 
-    // Check if the shopping cart exists
     if (!$cart) {
         return response()->json([
             'status' => 'error',
@@ -23,10 +20,21 @@ class ShoppingCartController extends Controller
         ], 404);
     }
 
-    // Return the shopping cart details with cart products
+    $subTotal = $cart->cartProducts->sum(function($cartProduct) {
+        return $cartProduct->product->price * $cartProduct->quantity;
+    });
+
+    $taxes = $subTotal * 0.10; // 10% tax
+    $deliveryPrice = 0; // Adjust this based on your logic
+    $total = $subTotal + $taxes + $deliveryPrice;
+
     return response()->json([
         'status' => 'success',
         'cart' => $cart,
+        'sub_total' => round($subTotal, 2),
+        'taxes' => round($taxes, 2),
+        'delivery_price' => round($deliveryPrice, 2),
+        'total' => round($total, 2),
     ], 200);
 }
 

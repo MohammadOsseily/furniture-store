@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $user_id
  * @property string $total_amount
  * @property string $status
- * @property string|null $addres_line
+ * @property string|null $address_line
  * @property string|null $city
  * @property string|null $comment
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -42,7 +42,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'total_amount', 'status', 'addres_line', 'city', 'comment'];
+    protected $fillable = ['user_id', 'total_amount', 'status', 'address_line', 'city', 'comment'];
 
     public function user(): BelongsTo
     {

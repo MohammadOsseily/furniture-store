@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'canceled'])->default('pending');
-            $table->text('addres_line')->nullable();
+            $table->text('address_line')->nullable();
             $table->text('city')->nullable();
             $table->text('comment')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -21,37 +21,43 @@ class UserController extends Controller
         ], 200);
     }
 
-    // Update the authenticated user's profile
     public function updateProfile(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'sometimes|string|min:6|confirmed',
-        ]);
-
-        if ($request->has('name')) {
-            $user->name = $request->name;
-        }
-
-        if ($request->has('email')) {
-            $user->email = $request->email;
-        }
-
-        if ($request->has('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->save();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Profile updated successfully',
-            'user' => $user,
-        ], 200);
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        'password' => 'nullable|string|min:6|confirmed',
+    ]);
+    if ($request->has('name')) {
+        $user->name = $request->name;
     }
+
+    if ($request->has('email')) {
+        $user->email = $request->email;
+    }
+
+    if ($request->has('password')) {
+        $user->password = Hash::make($request->password);
+    }
+
+    $user->name = $request->name;
+    $user->email = $request->email;
+
+    if ($request->password) {
+        $user->password = Hash::make($request->password);
+    }
+
+    $user->save();
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Profile updated successfully',
+        'user' => $user,
+    ]);
+}
+
 
     // List all users with pagination (Admin only)
     public function index()
@@ -71,3 +77,4 @@ class UserController extends Controller
         ], 200);
     }
 }
+

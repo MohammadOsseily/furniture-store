@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 // Public routes for products
 Route::get('/products', [ProductController::class, 'index']);                // List All Products
 Route::get('/products/{id}', [ProductController::class, 'show']);            // Show Single Product
+Route::get('/products/threeD', [ProductController::class, 'getProductsWith3DModels']); // Get Products with 3D models
 
 // Admin routes for managing products
 Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {

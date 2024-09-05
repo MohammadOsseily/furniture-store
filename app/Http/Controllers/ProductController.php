@@ -132,4 +132,10 @@ class ProductController extends Controller
             'message' => 'Product deleted successfully',
         ]);
     }
+    public function getProductsWith3DModels() {
+        $products = Product::with('product3d')->get();
+        return response()->json($products);
+    }
+
 }
+

@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\CartProductController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ShoppingCartController;
 
 /*
@@ -123,3 +124,5 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/cart', [ShoppingCartController::class, 'show']); // View the shopping cart
     Route::post('/cart/clear', [ShoppingCartController::class, 'clear']); // Clear the shopping cart
 });
+
+Route::post('/chat', [ChatController::class, 'chat']);

@@ -130,6 +130,31 @@ class Product3DController extends Controller
         ]);
     }
 
+    // Get all products with their associated 3D models
+    public function getProductsWith3DModels()
+    {
+        $products = Product::with('product3d')->get();
+        return response()->json($products);
+    }
 
+    public function updatePosition(Request $request, $id)
+{
+    $product3d = Product3D::find($id);
+
+    if(!$product3d) {
+        return response()->json(['error' => '3D Product not found'], 404);
+    }
+
+    $request->validate([
+        'x' => 'required|numeric',
+        'y' => 'required|numeric',
+        'z' => 'required|numeric',
+    ]);
+
+    $product3d->position = ['x' => $request->x, 'y' => $request->y, 'z' => $request->z];
+    $product3d->save();
+
+    return response()->json(['message' => 'Position updated successfully', 'product3d' => $product3d]);
+}
 
 }

@@ -71,7 +71,7 @@ Route::get('/product3ds/{id}', [Product3DController::class, 'show']);           
 Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
     Route::post('/product3ds', [Product3DController::class, 'store']);                   // Create 3D Product (Admin Only)
     Route::put('/product3ds/{id}', [Product3DController::class, 'update']);              // Update 3D Product (Admin Only)
-
+    Route::delete('/product3ds/{id}', [Product3DController::class, 'destroy']);          // Delete 3D Product (Admin Only)
 });
 
 

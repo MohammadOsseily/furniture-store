@@ -65,6 +65,7 @@ Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
 
 // Public routes for 3D products
 Route::get('/product3ds', [Product3DController::class, 'index']);                // List All 3D Products
+Route::get('/product3ds/{id}', [Product3DController::class, 'show']);            // Show Single 3D Product
 
 /*
 |--------------------------------------------------------------------------

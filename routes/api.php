@@ -67,6 +67,14 @@ Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
 Route::get('/product3ds', [Product3DController::class, 'index']);                // List All 3D Products
 Route::get('/product3ds/{id}', [Product3DController::class, 'show']);            // Show Single 3D Product
 
+// Admin routes for managing 3D products
+Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
+    Route::post('/product3ds', [Product3DController::class, 'store']);                   // Create 3D Product (Admin Only)
+
+});
+
+
+Route::post('/chat', [ChatController::class, 'chat']);
 /*
 |--------------------------------------------------------------------------
 | Category Routes

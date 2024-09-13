@@ -123,6 +123,34 @@ class UserController extends Controller
         ], 200);
     }
 
+    // Delete User (Admin Only)
+    public function deleteUser($id)
+    {
+        // Check if the authenticated user is an admin
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
 
+        // Find the user
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        // Delete the user
+        $user->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User deleted successfully',
+        ], 200);
+    }
+}
 
 

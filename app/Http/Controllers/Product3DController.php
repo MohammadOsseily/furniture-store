@@ -40,5 +40,33 @@ class Product3DController extends Controller
         ]);
     }
 
+    // Create New 3D Product (Admin Only)
+    public function store(Request $request)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
+
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'model_file_path' => 'required|string',
+            'position' => 'nullable|array',
+            'scale' => 'nullable|array',
+            'rotation' => 'nullable|array',
+        ]);
+
+        $product3d = Product3D::create($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => '3D Product created successfully',
+            'product3d' => $product3d,
+        ], 201);
+    }
+
+
 
 }

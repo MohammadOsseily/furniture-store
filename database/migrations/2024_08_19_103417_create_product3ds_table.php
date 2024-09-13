@@ -13,12 +13,14 @@ return new class extends Migration
     {
         if(!Schema::hasTable("product3ds")){
             Schema::create('product3ds', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('product_id');
-            $table->string('model_file_path');
-            $table->enum('file_type', ['gltf', 'obj', 'fbx']);
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->timestamps();
+                $table->id();
+                $table->unsignedBigInteger('product_id');
+                $table->string('model_file_path');
+                $table->json('position')->default(json_encode(['x' => 0, 'y' => 0, 'z' => 0]));
+                $table->json('scale')->default(json_encode(['x' => 3, 'y' => 3, 'z' => 3]));
+                $table->json('rotation')->default(json_encode(['x' => 0, 'y' => 0, 'z' => 0]));
+                $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+                $table->timestamps();
             });
         }
     }

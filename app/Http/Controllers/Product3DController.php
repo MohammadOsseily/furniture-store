@@ -103,6 +103,33 @@ class Product3DController extends Controller
     }
 
 
+    // Delete 3D Product (Admin Only)
+    public function destroy($id)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
+
+        $product3d = Product3D::find($id);
+
+        if (!$product3d) {
+            return response()->json([
+                'status' => 'error',
+                'message' => '3D Product not found',
+            ], 404);
+        }
+
+        $product3d->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => '3D Product deleted successfully',
+        ]);
+    }
+
 
 
 }

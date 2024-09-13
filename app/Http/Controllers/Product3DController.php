@@ -67,6 +67,42 @@ class Product3DController extends Controller
         ], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        if (Gate::denies('isAdmin')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access',
+            ], 403);
+        }
+
+        $product3d = Product3D::find($id);
+
+        if (!$product3d) {
+            return response()->json([
+                'status' => 'error',
+                'message' => '3D Product not found',
+            ], 404);
+        }
+
+        // Validate request
+        $request->validate([
+            'position' => 'sometimes|array',  // Ensure position is validated as an array
+            'scale' => 'sometimes|array',
+            'rotation' => 'sometimes|array',
+        ]);
+
+        // Update the product's position
+        $product3d->update($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'message' => '3D Product updated successfully',
+            'product3d' => $product3d,
+        ]);
+    }
+
+
 
 
 }

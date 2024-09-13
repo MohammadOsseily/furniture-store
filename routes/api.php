@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\CartProductController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\Product3DController;
 use App\Http\Controllers\ShoppingCartController;
 
 /*
@@ -35,6 +36,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/user/profile', [UserController::class, 'profile']);              // Get User Profile
     Route::post('/user/profile/update', [UserController::class, 'updateProfile']); // Update User Profile
     Route::get('/users', [UserController::class, 'index'])->middleware('isAdmin'); // List All Users (Admin Only)
+    Route::post('/users/{id}/update', [UserController::class, 'updateUser'])->middleware('isAdmin'); // Update User
+    Route::post('/users/{id}/delete', [UserController::class, 'deleteUser'])->middleware('isAdmin'); // Delete User
 });
 
 /*
@@ -46,7 +49,6 @@ Route::group(['middleware' => 'auth:api'], function () {
 // Public routes for products
 Route::get('/products', [ProductController::class, 'index']);                // List All Products
 Route::get('/products/{id}', [ProductController::class, 'show']);            // Show Single Product
-Route::get('/products/threeD', [ProductController::class, 'getProductsWith3DModels']); // Get Products with 3D models
 
 // Admin routes for managing products
 Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
@@ -54,6 +56,15 @@ Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
     Route::post('/products/{id}/update', [ProductController::class, 'update']);      // Update Product (Admin Only)
     Route::post('/products/{id}/delete', [ProductController::class, 'destroy']);     // Delete Product (Admin Only)
 });
+
+/*
+|--------------------------------------------------------------------------
+| Product3D Routes
+|--------------------------------------------------------------------------
+*/
+
+// Public routes for 3D products
+Route::get('/product3ds', [Product3DController::class, 'index']);                // List All 3D Products
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +83,8 @@ Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
     Route::post('/categories/create', [CategoryController::class, 'store']);            // Create Category (Admin Only)
     Route::post('/categories/{id}/update', [CategoryController::class, 'update']);      // Update Category (Admin Only)
     Route::post('/categories/{id}/delete', [CategoryController::class, 'destroy']);     // Delete Category (Admin Only)
+    Route::post('/product3ds/{id}/position', [Product3DController::class, 'updatePosition']);
+
 });
 
 /*

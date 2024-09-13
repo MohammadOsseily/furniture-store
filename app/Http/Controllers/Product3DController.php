@@ -22,6 +22,23 @@ class Product3DController extends Controller
         return response()->json($product3ds, 200);
     }
 
+    // Show Single 3D Product
+    public function show($id)
+    {
+        $product3d = Product3D::with('product:id,name')->findOrFail($id);
+
+        if (!$product3d) {
+            return response()->json([
+                'status' => 'error',
+                'message' => '3D Product not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'product3d' => $product3d,
+        ]);
+    }
 
 
 }

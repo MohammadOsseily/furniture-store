@@ -12,6 +12,7 @@ use App\Http\Controllers\CartProductController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Product3DController;
 use App\Http\Controllers\ShoppingCartController;
+use App\Http\Controllers\UserActivityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,8 +75,14 @@ Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
     Route::delete('/product3ds/{id}', [Product3DController::class, 'destroy']);          // Delete 3D Product (Admin Only)
 });
 
+/*
+|--------------------------------------------------------------------------
+| Chat Route
+|--------------------------------------------------------------------------
+*/
 
 Route::post('/chat', [ChatController::class, 'chat']);
+
 /*
 |--------------------------------------------------------------------------
 | Category Routes
@@ -94,7 +101,6 @@ Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
     Route::post('/categories/{id}/update', [CategoryController::class, 'update']);      // Update Category (Admin Only)
     Route::post('/categories/{id}/delete', [CategoryController::class, 'destroy']);     // Delete Category (Admin Only)
     Route::post('/product3ds/{id}/position', [Product3DController::class, 'updatePosition']);
-
 });
 
 /*
@@ -148,4 +154,23 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/cart/clear', [ShoppingCartController::class, 'clear']); // Clear the shopping cart
 });
 
-Route::post('/chat', [ChatController::class, 'chat']);
+/*
+|--------------------------------------------------------------------------
+| User Activity Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['middleware' => 'auth:api'], function () {
+    // User Activity Routes
+    Route::post('/user-activities', [UserActivityController::class, 'store']);          // Record User Activity
+    Route::get('/recommendations', [UserActivityController::class, 'recommendProducts']); // Get Recommendations
+});
+
+/*
+|--------------------------------------------------------------------------
+| Chat Route (Remove Duplicate if Necessary)
+|--------------------------------------------------------------------------
+*/
+
+// Remove this if it's duplicated
+// Route::post('/chat', [ChatController::class, 'chat']);

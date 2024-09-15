@@ -16,9 +16,9 @@ return new class extends Migration
                 $table->id();
                 $table->unsignedBigInteger('product_id');
                 $table->string('model_file_path');
-                $table->json('position')->default(json_encode(['x' => 0, 'y' => 0, 'z' => 0]));
-                $table->json('scale')->default(json_encode(['x' => 3, 'y' => 3, 'z' => 3]));
-                $table->json('rotation')->default(json_encode(['x' => 0, 'y' => 0, 'z' => 0]));
+                $table->json('position')->default(NULL);
+                $table->json('scale')->default(NULL);
+                $table->json('rotation')->default(NULL);
                 $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
                 $table->timestamps();
             });

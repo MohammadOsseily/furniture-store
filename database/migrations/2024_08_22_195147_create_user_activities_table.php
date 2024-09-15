@@ -14,10 +14,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('product_id');
-            $table->enum('interaction_type', ['click', 'view', 'add_to_cart']);
+            $table->string('interaction_type'); // e.g., 'click', 'add_to_cart', etc.
+            $table->timestamps();
+
+            // Foreign keys
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->timestamps();
         });
     }
     }

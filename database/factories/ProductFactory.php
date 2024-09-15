@@ -12,15 +12,13 @@ class ProductFactory extends Factory
 
     public function definition(): array
     {
-        $category = Category::inRandomOrder()->first();
-
         return [
-            'name' => $this->faker->word,
+            'name' => $this->faker->words(3, true), // Generates a random product name
             'description' => $this->faker->sentence,
             'price' => $this->faker->randomFloat(2, 10, 1000),
-            'category_id' => $category->id,  // Assigning a random category
+            'category_id' => Category::inRandomOrder()->first()->id,  // Assigns a random category
             'stock' => $this->faker->numberBetween(1, 100),
-            'image' => $this->faker->imageUrl(),
+            'image' => $this->faker->word,  // Generates a random image name
             'color' => $this->faker->safeColorName(),
             'created_at' => now(),
             'updated_at' => now(),

@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\Category;
@@ -11,10 +12,9 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word,
+            'name' => $this->faker->word,  // Random category name
             'created_at' => now(),
             'updated_at' => now(),
         ];
     }
 }
-

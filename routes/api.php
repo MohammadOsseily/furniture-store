@@ -111,11 +111,11 @@ Route::group(['middleware' => ['auth:api', 'isAdmin']], function () {
 
 Route::group(['middleware' => 'auth:api'], function () {
     // Admin routes for managing orders
-    Route::group(['middleware' => 'isAdmin'], function () {
+    // Route::group(['middleware' => 'isAdmin'], function () {
         Route::get('/orders', [OrderController::class, 'index']);                        // List All Orders (Admin Only)
         Route::post('/orders/{id}/update', [OrderController::class, 'update']);          // Update Order Status (Admin Only)
         Route::post('/orders/{id}/delete', [OrderController::class, 'destroy']);         // Delete Order (Admin Only)
-    });
+    // });
 
     // User route to view their own order history
     Route::get('/orders/history', [OrderController::class, 'orderHistory']);         // User's Order History

@@ -183,6 +183,45 @@ class OrderController extends Controller
             'message' => 'Order deleted successfully',
         ]);
     }
+    // Cancel Order (User)
+public function cancelOrder($id)
+{
+    $order = Order::find($id);
+
+    if (!$order) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Order not found',
+        ], 404);
+    }
+
+    // Check if the order belongs to the authenticated user
+    if (Auth::id() !== $order->user_id) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized access',
+        ], 403);
+    }
+
+    // Check if the order is in a state that can be canceled
+    $cancelableStatuses = ['pending', 'processing'];
+    if (!in_array($order->status, $cancelableStatuses)) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'This order cannot be canceled',
+        ], 400);
+    }
+
+    // Update the order status to canceled
+    $order->status = 'canceled';
+    $order->save();
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Order canceled successfully',
+        'order' => $order,
+    ]);
+}
 
 
 
